@@ -25,6 +25,22 @@ export class Dashboard extends Component {
         this.dt.exportCSV();
     }
 
+    paymentStatusTemplate(rowData, column) {
+        if (rowData['paid'] === true) {
+            return <i className="pi pi-check"></i>
+        } else {
+            return <i className="pi pi-times"></i>
+        }
+    }
+
+    discourseStatusTemplate(rowData, column) {
+        if (rowData['discourse']['active'] === true) {
+            return <i className="pi pi-check"></i>
+        } else {
+            return <i className="pi pi-times"></i>
+        }
+    }
+
     render() {
         let header = <div style={{textAlign:'left'}}>
                         <Button type="button" icon="pi pi-external-link" iconPos="left" label="CSV" onClick={this.export}/>
@@ -32,11 +48,18 @@ export class Dashboard extends Component {
 
         let headerGroup = <ColumnGroup>
                             <Row>
-                                <Column header="name" rowSpan={2} sortable="true" />
-                                <Column header="email" rowSpan={2} sortable="true" />
+                                <Column header="name" rowSpan={2} sortable />
+                                <Column header="email" rowSpan={2} sortable />
+                                <Column header="paid" rowSpan={2} sortable />
+                                <Column header="payment" colSpan={4} />
                                 <Column header="forum" colSpan={2} />
                             </Row>
                             <Row>
+                                <Column header="method" />
+                                <Column header="date" />
+                                <Column header="amount" />
+                                <Column header="payer" />
+
                                 <Column header="username" />
                                 <Column header="active" />
                             </Row>
@@ -49,9 +72,20 @@ export class Dashboard extends Component {
                 headerColumnGroup={headerGroup}
                 ref={(el) => { this.dt = el; }}>
                 <Column field="name" />
-                <Column field="email" />
+                <Column field="email" style={
+                    { textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden'
+                    }} />
+                <Column field="paid" body={this.paymentStatusTemplate} />
+
+                <Column field="payment.method" />
+                <Column field="payment.paidAt" />
+                <Column field="payment.amount" />
+                <Column field="payment.payerName" />
+
                 <Column field="discourse.username" />
-                <Column field="discourse.active" />
+                <Column field="discourse.active" body={this.discourseStatusTemplate} />
             </DataTable>
         );
     }
