@@ -42,6 +42,8 @@ export class Dashboard extends Component {
     }
 
     render() {
+        // const paginatorLeft = <Button icon="pi pi-refresh"/>;
+
         let header = <div style={{textAlign:'left'}}>
                         <Button type="button" icon="pi pi-external-link" iconPos="left" label="CSV" onClick={this.export}/>
                     </div>;
@@ -68,15 +70,18 @@ export class Dashboard extends Component {
         return (
             <DataTable 
                 value={this.state.members}
+                paginator
+                responsive
+                // paginatorLeft={paginatorLeft}
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                rows={25}
+                rowsPerPageOptions={[10,25,50,100,500]}
                 header={header}
                 headerColumnGroup={headerGroup}
                 ref={(el) => { this.dt = el; }}>
                 <Column field="name" />
-                <Column field="email" style={
-                    { textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden'
-                    }} />
+                <Column field="email" className="ellipsis" />
                 <Column field="paid" body={this.paymentStatusTemplate} />
 
                 <Column field="payment.method" />
@@ -84,7 +89,7 @@ export class Dashboard extends Component {
                 <Column field="payment.amount" />
                 <Column field="payment.payerName" />
 
-                <Column field="discourse.username" />
+                <Column field="discourse.username" className="ellipsis" />
                 <Column field="discourse.active" body={this.discourseStatusTemplate} />
             </DataTable>
         );
