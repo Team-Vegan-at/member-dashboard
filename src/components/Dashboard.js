@@ -48,20 +48,20 @@ export class Dashboard extends Component {
 
         let headerGroup = <ColumnGroup>
                             <Row>
-                                <Column header="name" rowSpan={2} sortable />
-                                <Column header="email" rowSpan={2} sortable />
-                                <Column header="paid" rowSpan={2} sortable />
+                                <Column header="name" rowSpan={2} field="name" sortable />
+                                <Column header="email" rowSpan={2} field="email" sortable />
+                                <Column header="paid" rowSpan={2} field="paid" sortable />
                                 <Column header="payment" colSpan={4} />
                                 <Column header="forum" colSpan={2} />
                             </Row>
                             <Row>
-                                <Column header="method" />
-                                <Column header="date" />
-                                <Column header="amount" />
-                                <Column header="payer" />
+                                <Column header="method" field="payment.method" sortable />
+                                <Column header="date" field="payment.date" sortable />
+                                <Column header="amount" field="payment.amount" sortable />
+                                <Column header="payer" field="payment.payerName" sortable />
 
-                                <Column header="username" />
-                                <Column header="active" />
+                                <Column header="username" field="discourse.username" sortable />
+                                <Column header="active" field="discourse.active" sortable />
                             </Row>
                         </ColumnGroup>;
 
