@@ -14,6 +14,7 @@ export class Dashboard extends Component {
     constructor() {
         super();
         this.state = {
+            loading: true,
             selectedPaymentState: null,
             selectedDiscourseState: null,
             paymentState: [
@@ -34,7 +35,12 @@ export class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.service.getMembers().then(data => this.setState({members: data}));
+        this.service.getMembers().then(data => this.setState(
+            {
+                members: data,
+                loading: false
+            }
+        ));
     }
 
     export() {
@@ -126,7 +132,8 @@ export class Dashboard extends Component {
                 header={header}
                 headerColumnGroup={headerGroup}
                 ref={(el) => { this.dt = el; }}
-                emptyMessage="No records found">
+                emptyMessage="No records found"
+                loading={this.state.loading}>
 
                 <Column field="name" />
                 <Column field="email" className="ellipsis" />
