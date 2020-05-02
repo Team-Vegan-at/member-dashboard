@@ -5,6 +5,7 @@ import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { ColumnGroup } from 'primereact/columngroup';
 import { Row } from 'primereact/row';
+import { Dropdown } from 'primereact/dropdown';
 
 import { MembersService } from '../services/MembersService';
 
@@ -12,7 +13,22 @@ export class Dashboard extends Component {
 
     constructor() {
         super();
-        this.state = {};
+        this.state = {
+            selectedPaymentState: null,
+            selectedDiscourseState: null,
+            paymentState: [
+                { label: 'Paid', value: 'true' },
+                { label: 'Not Paid', value: 'false' },
+            ],
+            discourseState: [
+                { label: 'Active', value: 'true' },
+                { label: 'Blocked', value: 'false' },
+                { label: 'Not signed up', value: 'na' },
+            ]
+        };
+        this.onPaymentStatusChange = this.onPaymentStatusChange.bind(this);
+        this.onDiscourseStatusChange = this.onDiscourseStatusChange.bind(this);
+
         this.service = new MembersService();
         this.export = this.export.bind(this);
     }
@@ -23,6 +39,20 @@ export class Dashboard extends Component {
 
     export() {
         this.dt.exportCSV();
+    }
+
+    onPaymentStatusChange(event) {
+        this.dt.filter(event.value, 'paid', 'equals');
+        this.setState({selectedPaymentState: event.value});
+    }
+
+    onDiscourseStatusChange(event) {
+        if (event.value === 'na') {
+            this.dt.filter(null, 'discourse', 'equals');
+        } else {
+            this.dt.filter(event.value, 'discourse.active', 'equals');
+        }
+        this.setState({selectedDiscourseState: event.value});
     }
 
     paymentStatusTemplate(rowData, column) {
@@ -43,16 +73,21 @@ export class Dashboard extends Component {
 
     render() {
         // const paginatorLeft = <Button icon="pi pi-refresh"/>;
+        const paymentStateFilter = <Dropdown style={{width: '100%'}} placeholder="filter" 
+            value={this.state.selectedPaymentState} options={this.state.paymentState} onChange={this.onPaymentStatusChange} showClear />;
+        const discourseStateFilter = <Dropdown style={{width: '100%'}} placeholder="filter" 
+            value={this.state.selectedDiscourseState} options={this.state.discourseState} onChange={this.onDiscourseStatusChange} showClear />;
 
-        let header = <div style={{textAlign:'left'}}>
+        const header = <div style={{textAlign:'left'}}>
                         <Button type="button" icon="pi pi-external-link" iconPos="left" label="CSV" onClick={this.export}/>
                     </div>;
 
-        let headerGroup = <ColumnGroup>
+
+        const headerGroup = <ColumnGroup>
                             <Row>
                                 <Column header="name" rowSpan={2} field="name" sortable />
                                 <Column header="email" rowSpan={2} field="email" sortable />
-                                <Column header="paid" rowSpan={2} field="paid" sortable />
+                                <Column header="paid" rowSpan={2} field="paid" />
                                 <Column header="payment" colSpan={4} />
                                 <Column header="forum" colSpan={2} />
                             </Row>
@@ -64,6 +99,17 @@ export class Dashboard extends Component {
 
                                 <Column header="username" field="discourse.username" sortable />
                                 <Column header="active" field="discourse.active" sortable />
+                            </Row>
+                            <Row>
+                                <Column field="name" filter filterPlaceholder="filter" />
+                                <Column field="email" filter filterPlaceholder="filter" />
+                                <Column field="paid" filter filterElement={paymentStateFilter} />
+                                <Column />
+                                <Column />
+                                <Column />
+                                <Column />
+                                <Column field="discourse.username" filter filterPlaceholder="filter" />
+                                <Column field="discourse" filter filterElement={discourseStateFilter} />
                             </Row>
                         </ColumnGroup>;
 
@@ -79,7 +125,9 @@ export class Dashboard extends Component {
                 rowsPerPageOptions={[10,25,50,100,500]}
                 header={header}
                 headerColumnGroup={headerGroup}
-                ref={(el) => { this.dt = el; }}>
+                ref={(el) => { this.dt = el; }}
+                emptyMessage="No records found">
+
                 <Column field="name" />
                 <Column field="email" className="ellipsis" />
                 <Column field="paid" body={this.paymentStatusTemplate} />
