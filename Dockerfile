@@ -31,7 +31,6 @@ WORKDIR /usr/share/nginx/html
 # Copy cache from Stage 1
 COPY --from=build-stage --chown=nginx /home/node/app/build /usr/share/nginx/html
 COPY --from=build-stage /home/node/app/build .
-COPY ./build .
 
 COPY ./nginx/default.conf /etc/nginx/conf.d/
 COPY ./nginx/nginx.htpasswd /etc/nginx/conf.d/
