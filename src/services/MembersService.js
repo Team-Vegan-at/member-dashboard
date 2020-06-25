@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export class MembersService {
 
-    API_HOST = 'https://api-qs.teamvegan.at';
-    API_KEY = 'd31VFwC6AYUHw413iIKzElKGntTT9X';
+    API_HOST = 'https://api.teamvegan.at';
+    API_KEY = 'Tcdz88F8vKsezgpmS0W0PbziYotHxr';
 
     getMembers(){
 
