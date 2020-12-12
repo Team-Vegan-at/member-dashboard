@@ -35,8 +35,7 @@ jobs:
         with:
           push: true
           tags: |
-            teamveganat/member-dashboard:nightly
-            teamveganat/member-dashboard:${{ steps.package-version.outputs.current-version}}
+            teamveganat/member-dashboard:latest
           build-args: |
             REACT_APP_API_URL=${{ secrets.PROD_REACT_APP_API_URL }}
             REACT_APP_API_KEY=${{ secrets.PROD_REACT_APP_API_KEY }}
