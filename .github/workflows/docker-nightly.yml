@@ -30,9 +30,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          repository: teamveganat/member-dashboard
           push: true
-          tags: nightly
+          tags: teamveganat/member-dashboard:nightly
           build-args: |
             REACT_APP_API_URL=${{ secrets.QS_REACT_APP_API_URL }}
             REACT_APP_API_KEY=${{ secrets.QS_REACT_APP_API_KEY }}
