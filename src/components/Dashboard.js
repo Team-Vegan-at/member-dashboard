@@ -89,9 +89,18 @@ export class Dashboard extends Component {
         }
     }
 
+    paymentDateTemplate(rowData, column) {
+        if (rowData.payment && rowData.paid) {
+            var dayjs = require('dayjs');
+            var parsedDate = dayjs(rowData.payment.paidAt.substring(0, 10), 'YYYY-MM-DD'); // "2020-01-09T04:19:31+00:00"
+            return parsedDate.format('DD.MM.YYYY').toString();
+        }
+        return '';
+    }
+
     discourseStatusTemplate(rowData, column) {
         if (!rowData['discourse']['id']) {
-            return <i class="pi pi-user-minus" />
+            return <i className="pi pi-user-minus" />
         } else if (rowData['discourse']['suspended_at']) {
             return ( 
                 <div>
@@ -122,7 +131,7 @@ export class Dashboard extends Component {
                 <Button type="button" icon="pi pi-external-link" iconPos="left" label="CSV" onClick={this.export}/>
             </div>);
 
-
+// sortFunction={this.sortDate}
         const headerGroup = (
             <ColumnGroup>
                 <Row>
@@ -172,10 +181,10 @@ export class Dashboard extends Component {
 
                 <Column field="name" />
                 <Column field="email" className="ellipsis" />
-                <Column field="paid" body={this.paymentStatusTemplate} />
+                <Column field="paid" body={this.paymentStatusTemplate.bind(this)} />
 
                 <Column field="payment.method" />
-                <Column field="payment.paidAt" />
+                <Column field="payment.paidAt" body={this.paymentDateTemplate.bind(this)} />
                 <Column field="payment.amount" />
                 <Column field="payment.payerName" />
 
