@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export class MembersService {
 
-    API_HOST = 'https://api.teamvegan.at';
-    API_KEY = 'Tcdz88F8vKsezgpmS0W0PbziYotHxr';
+    API_HOST = process.env.REACT_APP_API_URL;
+    API_KEY = process.env.REACT_APP_API_KEY;
 
     getMembers(){
 

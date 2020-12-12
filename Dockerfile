@@ -15,13 +15,16 @@ WORKDIR /home/node/app
 # where available (npm@5+)
 COPY --chown=node package*.json ./
 
-RUN npm install
+RUN yarn
 
 # Bundle app source code
 COPY --chown=node . .
 
-RUN npm run build && \
-  npm prune --production
+ARG REACT_APP_API_KEY
+ARG REACT_APP_API_URL
+
+RUN yarn run build && \
+    yarn cache clean
 
 ### STAGE 2
 FROM nginx:alpine as run-stage
