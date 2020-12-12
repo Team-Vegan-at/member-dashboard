@@ -17,3 +17,12 @@ code {
   white-space: nowrap;
   overflow: hidden;
 }
+
+.p-button.p-button-icon-only.p-button-rounded {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.p-column-filter {
+  width: 95%;
+}
