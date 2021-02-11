@@ -17,10 +17,15 @@ export class Dashboard extends Component {
         this.state = {
             loading: true,
             selectedPaymentState: null,
+            selectedSubscriptionState: null,
             selectedDiscourseState: null,
             paymentState: [
                 { label: 'Paid', value: 'true' },
                 { label: 'Not Paid', value: 'false' },
+            ],
+            subscriptionState: [
+                { label: 'Yes', value: 'true' },
+                { label: 'No', value: 'false' },
             ],
             discourseState: [
                 { label: 'Active', value: 'active' },
@@ -30,6 +35,7 @@ export class Dashboard extends Component {
             selectedDiscourseId: null,
         };
         this.onPaymentStatusChange = this.onPaymentStatusChange.bind(this);
+        this.onSubscriptionStatusChange = this.onSubscriptionStatusChange.bind(this);
         this.onDiscourseStatusChange = this.onDiscourseStatusChange.bind(this);
         
         this.service = new MembersService();
@@ -70,6 +76,23 @@ export class Dashboard extends Component {
         this.setState({selectedPaymentState: event.value});
     }
 
+    onSubscriptionStatusChange(event) {
+        // this.selectedSubscriptionFilter = event.value;
+        this.dt.filter(event.value, 'subscription.id', 'equals');
+        this.setState({selectedSubscriptionState: event.value});
+    }
+
+    subsciptionsCustomFilter(value) {
+        console.log(`${this.selectedSubscriptionFilter} == ${value}`);
+        // if (giltbisSelected === "Gültig") {
+        //     return value == null;
+        //   } else if (giltbisSelected === "Ungültig") {
+        //     return value != null;
+        //   } else {
+        //     //how to cancel filter or show all values
+        //   }
+    }
+
     onDiscourseStatusChange(event) {
         if (event.value === 'na') {
             this.dt.filter(null, 'discourse.id', 'equals');
@@ -89,9 +112,17 @@ export class Dashboard extends Component {
         }
     }
 
+    subscriptionStatusTemplate(rowData, column) {
+        if (rowData['subscription'] && Object.keys(rowData['subscription']).length > 0) {
+            return <i className="pi pi-check"/>
+        } else {
+            return <i className="pi pi-times"/>
+        }
+    }
+
     discourseStatusTemplate(rowData, column) {
         if (!rowData['discourse']['id']) {
-            return <i class="pi pi-user-minus" />
+            return <i className="pi pi-user-minus" />
         } else if (rowData['discourse']['suspended_at']) {
             return ( 
                 <div>
@@ -113,6 +144,9 @@ export class Dashboard extends Component {
         const paymentStateFilter =
             <Dropdown style={{width: '100%'}} placeholder="filter" 
                 value={this.state.selectedPaymentState} options={this.state.paymentState} onChange={this.onPaymentStatusChange} showClear />;
+        const subscriptionStateFilter =
+            <Dropdown style={{width: '100%'}} placeholder="filter" 
+                value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
         const discourseStateFilter =
             <Dropdown style={{width: '100%'}} placeholder="filter" 
                 value={this.state.selectedDiscourseState} options={this.state.discourseState} onChange={this.onDiscourseStatusChange} showClear />;
@@ -129,34 +163,56 @@ export class Dashboard extends Component {
                     <Column header="name" rowSpan={2} field="name" sortable />
                     <Column header="email" rowSpan={2} field="email" sortable />
                     <Column header="paid" rowSpan={2} field="paid" />
-                    <Column header="payment" colSpan={4} />
+                    <Column header="payment" colSpan={2} />
                     <Column header="forum" colSpan={2} />
                 </Row>
                 <Row>
-                    <Column header="method" field="payment.method" sortable />
-                    <Column header="date" field="payment.date" sortable />
-                    <Column header="amount" field="payment.amount" sortable />
-                    <Column header="payer" field="payment.payerName" sortable />
-
+                    <Column header="direct debit" field="subscription.id" sortable />
+                    <Column header="date" field="payment.paidAt" sortable />
                     <Column header="username" field="discourse.username" sortable />
                     <Column header="status" field="discourse.active" sortable />
                 </Row>
                 <Row>
-                    <Column field="name" filter filterPlaceholder="filter" />
-                    <Column field="email" filter filterPlaceholder="filter" />
-                    <Column field="paid" filter filterElement={paymentStateFilter} />
-                    <Column />
-                    <Column />
-                    <Column />
-                    <Column />
-                    <Column field="discourse.username" filter filterPlaceholder="filter" />
-                    <Column field="discourse" filter filterElement={discourseStateFilter} />
+                    <Column field="name"
+                            filter
+                            filterPlaceholder="filter"
+                            filterMatchMode="contains" />
+
+                    <Column field="email"
+                            filter
+                            filterPlaceholder="filter"
+                            filterMatchMode="contains" />
+
+                    <Column field="paid"
+                            filter
+                            filterElement={paymentStateFilter} />
+
+                    <Column field="subscription.id" filter 
+                            filterElement={subscriptionStateFilter} 
+                            // filterFunction={this.subsciptionsCustomFilter}
+                            filterMatchMode="custom" 
+                            />
+
+                    <Column field="payment.paidAt"
+                            filter
+                            filterPlaceholder="filter"
+                            filterMatchMode="contains"/>
+
+                    <Column field="discourse.username" 
+                            filter
+                            filterPlaceholder="filter"
+                            filterMatchMode="contains" />
+
+                    <Column field="discourse"
+                            filter
+                            filterElement={discourseStateFilter} />
                 </Row>
             </ColumnGroup>);
 
         return (
             <DataTable 
                 value={this.state.members}
+                sortField="payment.paidAt" sortOrder={-1}
                 paginator
                 responsive
                 // paginatorLeft={paginatorLeft}
@@ -174,10 +230,8 @@ export class Dashboard extends Component {
                 <Column field="email" className="ellipsis" />
                 <Column field="paid" body={this.paymentStatusTemplate} />
 
-                <Column field="payment.method" />
+                <Column field="subscription.id" body={this.subscriptionStatusTemplate} />
                 <Column field="payment.paidAt" />
-                <Column field="payment.amount" />
-                <Column field="payment.payerName" />
 
                 <Column field="discourse.username" className="ellipsis" />
                 <Column field="discourse.active" body={this.discourseStatusTemplate.bind(this)} />
