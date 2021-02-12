@@ -7,6 +7,7 @@ import { Column } from 'primereact/column';
 import { ColumnGroup } from 'primereact/columngroup';
 import { Row } from 'primereact/row';
 import { Dropdown } from 'primereact/dropdown';
+import { Tooltip } from 'primereact/tooltip';
 
 import { MembersService } from '../services/MembersService';
 
@@ -110,19 +111,67 @@ export class Dashboard extends Component {
 
     discourseStatusTemplate(rowData, column) {
         if (!rowData['discourse']['id']) {
-            return <i className="pi pi-user-minus" />
+            return (
+                <div>
+                    <Tooltip target=".noUserClass" position="left" />
+                    <i className="pi pi-user-minus noUserClass"
+                      data-pr-tooltip="Not registered in forum" />
+                </div>
+            );
         } else if (rowData['discourse']['suspended_at']) {
             return ( 
                 <div>
-                    <i className="pi pi-times"/>
-                    <Button className="p-button-success p-button-raised p-button-rounded" icon="pi pi-unlock" type="button" tooltip="Unsuspend user" onClick={() => this.unsuspend(rowData['discourse']['id'])}/>
+                    <Tooltip target=".forumSuspendedClass" position="left" />
+                    <i className="pi pi-times forumSuspendedClass"
+                        data-pr-tooltip="Forum user suspended" />
                 </div>
             );
         } else {
             return (
                 <div>
-                    <i className="pi pi-check"/>
-                    <Button className="p-button-danger p-button-raised p-button-rounded" icon="pi pi-lock" type="button" tooltip="Suspend user" onClick={() => this.suspend(rowData['discourse']['id'])}/>
+                    <Tooltip target=".forumActiveClass" position="left" />
+                    <i className="pi pi-check forumActiveClass"
+                        data-pr-tooltip="Forum user active" />
+                </div>
+            );
+        }
+    }
+
+    actionsMollieTemplate(rowData, column) {
+        return ( 
+            <div>
+                <Tooltip target=".actionsClass" position="left" />
+                <a  target="_blank"
+                    rel="noreferrer"
+                    href={ `https://www.mollie.com/dashboard/org_7157271/customers/${rowData.mollieCustId}` }
+                    alt="Open in Mollie"
+                    data-pr-tooltip="Open in Mollie"
+                    className="actionsClass"
+                >
+                    <img src="./mollie.png" style={{ width: 50 + 'px' }} />
+                </a>                        
+            </div>
+        );
+    }
+
+    actionsDiscourseTemplate(rowData, column) {
+        if (!rowData['discourse']['id']) {
+        } else if (rowData['discourse']['suspended_at']) {
+            return ( 
+                <div>
+                    <Button className="p-button-success p-button-raised p-button-rounded" 
+                            icon="pi pi-unlock" type="button" tooltip="Unsuspend user" 
+                            tooltipOptions={{ position: "left" }}
+                            onClick={() => this.unsuspend(rowData['discourse']['id'])}/>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <Button className="p-button-danger p-button-raised p-button-rounded" 
+                            icon="pi pi-lock" type="button" tooltip="Suspend user" 
+                            tooltipOptions={{ position: "left" }}
+                            onClick={() => this.suspend(rowData['discourse']['id'])}/>
                 </div>
             );
         }
@@ -153,6 +202,7 @@ export class Dashboard extends Component {
                     <Column header="paid" rowSpan={2} field="paid" />
                     <Column header="payment" colSpan={2} />
                     <Column header="forum" colSpan={2} />
+                    <Column header="actions" rowSpan={2} colSpan={2} field="actions" />
                 </Row>
                 <Row>
                     <Column header="direct debit" field="activeSubscription" sortable />
@@ -192,6 +242,8 @@ export class Dashboard extends Component {
                     <Column field="discourse"
                             filter
                             filterElement={discourseStateFilter} />
+
+                    <Column field="actions" />
                 </Row>
             </ColumnGroup>);
 
@@ -210,7 +262,8 @@ export class Dashboard extends Component {
                 headerColumnGroup={headerGroup}
                 ref={(el) => { this.dt = el; }}
                 emptyMessage="No records found"
-                loading={this.state.loading}>
+                loading={this.state.loading}
+                autoLayout={true}>
 
                 <Column field="name" />
                 <Column field="email" className="ellipsis" />
@@ -221,6 +274,9 @@ export class Dashboard extends Component {
 
                 <Column field="discourse.username" className="ellipsis" />
                 <Column field="discourse.active" body={this.discourseStatusTemplate.bind(this)} />
+
+                <Column field="actionsMollie" body={this.actionsMollieTemplate.bind(this)} />
+                <Column field="actionsDiscourse" body={this.actionsDiscourseTemplate.bind(this)} />
             </DataTable>
         );
     }
