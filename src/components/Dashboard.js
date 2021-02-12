@@ -77,20 +77,8 @@ export class Dashboard extends Component {
     }
 
     onSubscriptionStatusChange(event) {
-        // this.selectedSubscriptionFilter = event.value;
-        this.dt.filter(event.value, 'subscription.id', 'equals');
+        this.dt.filter(event.value, 'activeSubscription', 'equals');
         this.setState({selectedSubscriptionState: event.value});
-    }
-
-    subsciptionsCustomFilter(value) {
-        console.log(`${this.selectedSubscriptionFilter} == ${value}`);
-        // if (giltbisSelected === "Gültig") {
-        //     return value == null;
-        //   } else if (giltbisSelected === "Ungültig") {
-        //     return value != null;
-        //   } else {
-        //     //how to cancel filter or show all values
-        //   }
     }
 
     onDiscourseStatusChange(event) {
@@ -167,7 +155,7 @@ export class Dashboard extends Component {
                     <Column header="forum" colSpan={2} />
                 </Row>
                 <Row>
-                    <Column header="direct debit" field="subscription.id" sortable />
+                    <Column header="direct debit" field="activeSubscription" sortable />
                     <Column header="date" field="payment.paidAt" sortable />
                     <Column header="username" field="discourse.username" sortable />
                     <Column header="status" field="discourse.active" sortable />
@@ -187,11 +175,9 @@ export class Dashboard extends Component {
                             filter
                             filterElement={paymentStateFilter} />
 
-                    <Column field="subscription.id" filter 
-                            filterElement={subscriptionStateFilter} 
-                            // filterFunction={this.subsciptionsCustomFilter}
-                            filterMatchMode="custom" 
-                            />
+                    <Column field="activeSubscription" 
+                            filter
+                            filterElement={subscriptionStateFilter}  />
 
                     <Column field="payment.paidAt"
                             filter
@@ -230,7 +216,7 @@ export class Dashboard extends Component {
                 <Column field="email" className="ellipsis" />
                 <Column field="paid" body={this.paymentStatusTemplate} />
 
-                <Column field="subscription.id" body={this.subscriptionStatusTemplate} />
+                <Column field="activeSubscription" body={this.subscriptionStatusTemplate} />
                 <Column field="payment.paidAt" />
 
                 <Column field="discourse.username" className="ellipsis" />
