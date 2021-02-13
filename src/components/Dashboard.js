@@ -7,6 +7,7 @@ import { Column } from 'primereact/column';
 import { ColumnGroup } from 'primereact/columngroup';
 import { Row } from 'primereact/row';
 import { Dropdown } from 'primereact/dropdown';
+import { Tooltip } from 'primereact/tooltip';
 
 import { MembersService } from '../services/MembersService';
 
@@ -17,10 +18,15 @@ export class Dashboard extends Component {
         this.state = {
             loading: true,
             selectedPaymentState: null,
+            selectedSubscriptionState: null,
             selectedDiscourseState: null,
             paymentState: [
                 { label: 'Paid', value: 'true' },
                 { label: 'Not Paid', value: 'false' },
+            ],
+            subscriptionState: [
+                { label: 'Yes', value: 'true' },
+                { label: 'No', value: 'false' },
             ],
             discourseState: [
                 { label: 'Active', value: 'active' },
@@ -30,6 +36,7 @@ export class Dashboard extends Component {
             selectedDiscourseId: null,
         };
         this.onPaymentStatusChange = this.onPaymentStatusChange.bind(this);
+        this.onSubscriptionStatusChange = this.onSubscriptionStatusChange.bind(this);
         this.onDiscourseStatusChange = this.onDiscourseStatusChange.bind(this);
         
         this.service = new MembersService();
@@ -70,6 +77,11 @@ export class Dashboard extends Component {
         this.setState({selectedPaymentState: event.value});
     }
 
+    onSubscriptionStatusChange(event) {
+        this.dt.filter(event.value, 'activeSubscription', 'equals');
+        this.setState({selectedSubscriptionState: event.value});
+    }
+
     onDiscourseStatusChange(event) {
         if (event.value === 'na') {
             this.dt.filter(null, 'discourse.id', 'equals');
@@ -89,21 +101,77 @@ export class Dashboard extends Component {
         }
     }
 
+    subscriptionStatusTemplate(rowData, column) {
+        if (rowData['subscription'] && Object.keys(rowData['subscription']).length > 0) {
+            return <i className="pi pi-check"/>
+        } else {
+            return <i className="pi pi-times"/>
+        }
+    }
+
     discourseStatusTemplate(rowData, column) {
         if (!rowData['discourse']['id']) {
-            return <i class="pi pi-user-minus" />
+            return (
+                <div>
+                    <Tooltip target=".noUserClass" position="left" />
+                    <i className="pi pi-user-minus noUserClass"
+                      data-pr-tooltip="Not registered in forum" />
+                </div>
+            );
         } else if (rowData['discourse']['suspended_at']) {
             return ( 
                 <div>
-                    <i className="pi pi-times"/>
-                    <Button className="p-button-success p-button-raised p-button-rounded" icon="pi pi-unlock" type="button" tooltip="Unsuspend user" onClick={() => this.unsuspend(rowData['discourse']['id'])}/>
+                    <Tooltip target=".forumSuspendedClass" position="left" />
+                    <i className="pi pi-times forumSuspendedClass"
+                        data-pr-tooltip="Forum user suspended" />
                 </div>
             );
         } else {
             return (
                 <div>
-                    <i className="pi pi-check"/>
-                    <Button className="p-button-danger p-button-raised p-button-rounded" icon="pi pi-lock" type="button" tooltip="Suspend user" onClick={() => this.suspend(rowData['discourse']['id'])}/>
+                    <Tooltip target=".forumActiveClass" position="left" />
+                    <i className="pi pi-check forumActiveClass"
+                        data-pr-tooltip="Forum user active" />
+                </div>
+            );
+        }
+    }
+
+    actionsMollieTemplate(rowData, column) {
+        return ( 
+            <div>
+                <Tooltip target=".actionsClass" position="left" />
+                <a  target="_blank"
+                    rel="noreferrer"
+                    href={ `https://www.mollie.com/dashboard/org_7157271/customers/${rowData.mollieCustId}` }
+                    alt="Open in Mollie"
+                    data-pr-tooltip="Open in Mollie"
+                    className="actionsClass"
+                >
+                    <img src="./mollie.png" style={{ width: 50 + 'px' }} />
+                </a>                        
+            </div>
+        );
+    }
+
+    actionsDiscourseTemplate(rowData, column) {
+        if (!rowData['discourse']['id']) {
+        } else if (rowData['discourse']['suspended_at']) {
+            return ( 
+                <div>
+                    <Button className="p-button-success p-button-raised p-button-rounded" 
+                            icon="pi pi-unlock" type="button" tooltip="Unsuspend user" 
+                            tooltipOptions={{ position: "left" }}
+                            onClick={() => this.unsuspend(rowData['discourse']['id'])}/>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <Button className="p-button-danger p-button-raised p-button-rounded" 
+                            icon="pi pi-lock" type="button" tooltip="Suspend user" 
+                            tooltipOptions={{ position: "left" }}
+                            onClick={() => this.suspend(rowData['discourse']['id'])}/>
                 </div>
             );
         }
@@ -113,6 +181,9 @@ export class Dashboard extends Component {
         const paymentStateFilter =
             <Dropdown style={{width: '100%'}} placeholder="filter" 
                 value={this.state.selectedPaymentState} options={this.state.paymentState} onChange={this.onPaymentStatusChange} showClear />;
+        const subscriptionStateFilter =
+            <Dropdown style={{width: '100%'}} placeholder="filter" 
+                value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
         const discourseStateFilter =
             <Dropdown style={{width: '100%'}} placeholder="filter" 
                 value={this.state.selectedDiscourseState} options={this.state.discourseState} onChange={this.onDiscourseStatusChange} showClear />;
@@ -129,34 +200,57 @@ export class Dashboard extends Component {
                     <Column header="name" rowSpan={2} field="name" sortable />
                     <Column header="email" rowSpan={2} field="email" sortable />
                     <Column header="paid" rowSpan={2} field="paid" />
-                    <Column header="payment" colSpan={4} />
+                    <Column header="payment" colSpan={2} />
                     <Column header="forum" colSpan={2} />
+                    <Column header="actions" rowSpan={2} colSpan={2} field="actions" />
                 </Row>
                 <Row>
-                    <Column header="method" field="payment.method" sortable />
-                    <Column header="date" field="payment.date" sortable />
-                    <Column header="amount" field="payment.amount" sortable />
-                    <Column header="payer" field="payment.payerName" sortable />
-
+                    <Column header="direct debit" field="activeSubscription" sortable />
+                    <Column header="date" field="payment.paidAt" sortable />
                     <Column header="username" field="discourse.username" sortable />
                     <Column header="status" field="discourse.active" sortable />
                 </Row>
                 <Row>
-                    <Column field="name" filter filterPlaceholder="filter" />
-                    <Column field="email" filter filterPlaceholder="filter" />
-                    <Column field="paid" filter filterElement={paymentStateFilter} />
-                    <Column />
-                    <Column />
-                    <Column />
-                    <Column />
-                    <Column field="discourse.username" filter filterPlaceholder="filter" />
-                    <Column field="discourse" filter filterElement={discourseStateFilter} />
+                    <Column field="name"
+                            filter
+                            filterPlaceholder="filter"
+                            filterMatchMode="contains" />
+
+                    <Column field="email"
+                            filter
+                            filterPlaceholder="filter"
+                            filterMatchMode="contains" />
+
+                    <Column field="paid"
+                            filter
+                            filterElement={paymentStateFilter} />
+
+                    <Column field="activeSubscription" 
+                            filter
+                            filterElement={subscriptionStateFilter}  />
+
+                    <Column field="payment.paidAt"
+                            filter
+                            filterPlaceholder="filter"
+                            filterMatchMode="contains"/>
+
+                    <Column field="discourse.username" 
+                            filter
+                            filterPlaceholder="filter"
+                            filterMatchMode="contains" />
+
+                    <Column field="discourse"
+                            filter
+                            filterElement={discourseStateFilter} />
+
+                    <Column field="actions" />
                 </Row>
             </ColumnGroup>);
 
         return (
             <DataTable 
                 value={this.state.members}
+                sortField="payment.paidAt" sortOrder={-1}
                 paginator
                 responsive
                 // paginatorLeft={paginatorLeft}
@@ -168,19 +262,21 @@ export class Dashboard extends Component {
                 headerColumnGroup={headerGroup}
                 ref={(el) => { this.dt = el; }}
                 emptyMessage="No records found"
-                loading={this.state.loading}>
+                loading={this.state.loading}
+                autoLayout={true}>
 
                 <Column field="name" />
                 <Column field="email" className="ellipsis" />
                 <Column field="paid" body={this.paymentStatusTemplate} />
 
-                <Column field="payment.method" />
+                <Column field="activeSubscription" body={this.subscriptionStatusTemplate} />
                 <Column field="payment.paidAt" />
-                <Column field="payment.amount" />
-                <Column field="payment.payerName" />
 
                 <Column field="discourse.username" className="ellipsis" />
                 <Column field="discourse.active" body={this.discourseStatusTemplate.bind(this)} />
+
+                <Column field="actionsMollie" body={this.actionsMollieTemplate.bind(this)} />
+                <Column field="actionsDiscourse" body={this.actionsDiscourseTemplate.bind(this)} />
             </DataTable>
         );
     }
