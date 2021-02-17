@@ -109,6 +109,18 @@ export class Dashboard extends Component {
         }
     }
 
+    dateTemplate(rowData, column) {
+        if (rowData['payment'] && Object.keys(rowData['payment']).includes('paidAt')) {
+            let dateFormat = rowData['payment']['paidAt'];
+            if (dateFormat) {
+                dateFormat = dateFormat.substr(0, 10);
+            }
+            return dateFormat;
+        } else {
+            return <p></p>
+        }
+    }
+
     discourseStatusTemplate(rowData, column) {
         if (!rowData['discourse']['id']) {
             return (
@@ -160,7 +172,7 @@ export class Dashboard extends Component {
             return ( 
                 <div>
                     <Button className="p-button-success p-button-raised p-button-rounded" 
-                            icon="pi pi-unlock" type="button" tooltip="Unsuspend user" 
+                            icon="pi pi-unlock" type="button" tooltip="Unsuspend forum user" 
                             tooltipOptions={{ position: "left" }}
                             onClick={() => this.unsuspend(rowData['discourse']['id'])}/>
                 </div>
@@ -169,7 +181,7 @@ export class Dashboard extends Component {
             return (
                 <div>
                     <Button className="p-button-danger p-button-raised p-button-rounded" 
-                            icon="pi pi-lock" type="button" tooltip="Suspend user" 
+                            icon="pi pi-lock" type="button" tooltip="Suspend forum user" 
                             tooltipOptions={{ position: "left" }}
                             onClick={() => this.suspend(rowData['discourse']['id'])}/>
                 </div>
@@ -199,12 +211,12 @@ export class Dashboard extends Component {
                 <Row>
                     <Column header="name" rowSpan={2} field="name" sortable />
                     <Column header="email" rowSpan={2} field="email" sortable />
-                    <Column header="paid" rowSpan={2} field="paid" />
-                    <Column header="payment" colSpan={2} />
+                    <Column header={ `membership 2021` } colSpan={3} />
                     <Column header="forum" colSpan={2} />
                     <Column header="actions" rowSpan={2} colSpan={2} field="actions" />
                 </Row>
                 <Row>
+                    <Column header="paid" field="paid" sortable />
                     <Column header="direct debit" field="activeSubscription" sortable />
                     <Column header="date" field="payment.paidAt" sortable />
                     <Column header="username" field="discourse.username" sortable />
@@ -267,10 +279,10 @@ export class Dashboard extends Component {
 
                 <Column field="name" />
                 <Column field="email" className="ellipsis" />
-                <Column field="paid" body={this.paymentStatusTemplate} />
 
+                <Column field="paid" body={this.paymentStatusTemplate} />
                 <Column field="activeSubscription" body={this.subscriptionStatusTemplate} />
-                <Column field="payment.paidAt" />
+                <Column field="payment.paidAt" body={this.dateTemplate} />
 
                 <Column field="discourse.username" className="ellipsis" />
                 <Column field="discourse.active" body={this.discourseStatusTemplate.bind(this)} />
