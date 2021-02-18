@@ -160,7 +160,7 @@ export class Dashboard extends Component {
                     data-pr-tooltip="Open in Mollie"
                     className="actionsClass"
                 >
-                    <img src="./mollie.png" style={{ width: 50 + 'px' }} />
+                    <img src="./mollie.png" alt="Mollie logo" style={{ width: 50 + 'px' }} />
                 </a>                        
             </div>
         );
