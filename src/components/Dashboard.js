@@ -150,20 +150,41 @@ export class Dashboard extends Component {
     }
 
     actionsMollieTemplate(rowData, column) {
-        return ( 
-            <div>
-                <Tooltip target=".actionsClass" position="left" />
-                <a  target="_blank"
-                    rel="noreferrer"
-                    href={ `https://www.mollie.com/dashboard/org_7157271/customers/${rowData.mollieCustId}` }
-                    alt="Open in Mollie"
-                    data-pr-tooltip="Open in Mollie"
-                    className="actionsClass"
-                >
-                    <img src="./mollie.png" alt="Mollie logo" style={{ width: 50 + 'px' }} />
-                </a>                        
-            </div>
-        );
+        if (rowData.mollieCustId !== undefined) {
+            return ( 
+                <div>
+                    <Tooltip target=".actionsClass" position="left" />
+                    <a  target="_blank"
+                        rel="noreferrer"
+                        href={ `https://www.mollie.com/dashboard/org_7157271/customers/${rowData.mollieCustId}` }
+                        alt="Open in Mollie"
+                        data-pr-tooltip="Open in Mollie"
+                        className="actionsClass"
+                    >
+                        <img src="./mollie.png" alt="Mollie logo" style={{ width: 50 + 'px' }} />
+                    </a>                        
+                </div>
+            );
+        }
+    }
+
+    actionsMailchimpTemplate(rowData, column) {
+        if (rowData.mailchimpId !== undefined) {
+            return ( 
+                <div>
+                    <Tooltip target=".actionsClass" position="left" />
+                    <a  target="_blank"
+                        rel="noreferrer"
+                        href={ `https://us4.admin.mailchimp.com/lists/members/view?id=${rowData.mailchimpId}&use_segment=Y` }
+                        alt="Open in Mailchimp"
+                        data-pr-tooltip="Open in Mailchimp"
+                        className="actionsClass"
+                    >
+                        <img src="./mailchimp.png" alt="Mailchimp logo" style={{ width: 40 + 'px' }} />
+                    </a>                        
+                </div>
+            );
+        } 
     }
 
     actionsDiscourseTemplate(rowData, column) {
@@ -213,11 +234,11 @@ export class Dashboard extends Component {
                     <Column header="email" rowSpan={2} field="email" sortable />
                     <Column header={ `membership 2021` } colSpan={3} />
                     <Column header="forum" colSpan={2} />
-                    <Column header="actions" rowSpan={2} colSpan={2} field="actions" />
+                    <Column header="actions" rowSpan={2} colSpan={3} field="actions" />
                 </Row>
                 <Row>
                     <Column header="paid" field="paid" sortable />
-                    <Column header="direct debit" field="activeSubscription" sortable />
+                    <Column header="dd" field="activeSubscription" sortable />
                     <Column header="date" field="payment.paidAt" sortable />
                     <Column header="username" field="discourse.username" sortable />
                     <Column header="status" field="discourse.active" sortable />
@@ -255,7 +276,7 @@ export class Dashboard extends Component {
                             filter
                             filterElement={discourseStateFilter} />
 
-                    <Column field="actions" />
+                    <Column field="actions" colSpan={3} />
                 </Row>
             </ColumnGroup>);
 
@@ -265,7 +286,6 @@ export class Dashboard extends Component {
                 sortField="payment.paidAt" sortOrder={-1}
                 paginator
                 responsive
-                // paginatorLeft={paginatorLeft}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 rows={25}
@@ -275,7 +295,8 @@ export class Dashboard extends Component {
                 ref={(el) => { this.dt = el; }}
                 emptyMessage="No records found"
                 loading={this.state.loading}
-                autoLayout={true}>
+                autoLayout={true}
+                className="p-datatable-sm">
 
                 <Column field="name" />
                 <Column field="email" className="ellipsis" />
@@ -288,6 +309,7 @@ export class Dashboard extends Component {
                 <Column field="discourse.active" body={this.discourseStatusTemplate.bind(this)} />
 
                 <Column field="actionsMollie" body={this.actionsMollieTemplate.bind(this)} />
+                <Column field="actionsMailchimp" body={this.actionsMailchimpTemplate.bind(this)} />
                 <Column field="actionsDiscourse" body={this.actionsDiscourseTemplate.bind(this)} />
             </DataTable>
         );
