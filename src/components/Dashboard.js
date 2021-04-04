@@ -83,13 +83,14 @@ export class Dashboard extends Component {
     }
 
     onDiscourseStatusChange(event) {
-        if (event.value === 'na') {
-            this.dt.filter(null, 'discourse.id', 'equals');
-        } else if (event.value === 'suspended') {
-            this.dt.filter(null, 'discourse.suspended_at', 'equals');
-        } else {
-            this.dt.filter("*.", 'discourse.suspended_at', 'equals');
-        }
+        this.dt.filter(event.value, 'discourseStatus', 'equals');
+        // if (event.value === 'na') {
+        //     this.dt.filter(null, 'discourse["id"]', 'equals');
+        // } else if (event.value === 'suspended') {
+        //     this.dt.filter(null, 'discourse.suspended_at', 'equals');
+        // } else {
+        //     this.dt.filter("*.", 'discourse.suspended_at', 'equals');
+        // }
         this.setState({selectedDiscourseState: event.value});
     }
 
@@ -241,7 +242,7 @@ export class Dashboard extends Component {
                     <Column header="dd" field="activeSubscription" sortable />
                     <Column header="date" field="payment.paidAt" sortable />
                     <Column header="username" field="discourse.username" sortable />
-                    <Column header="status" field="discourse.active" sortable />
+                    <Column header="status" field="discourseStatus" sortable />
                 </Row>
                 <Row>
                     <Column field="name"
@@ -272,7 +273,7 @@ export class Dashboard extends Component {
                             filterPlaceholder="filter"
                             filterMatchMode="contains" />
 
-                    <Column field="discourse"
+                    <Column field="discourseStatus"
                             filter
                             filterElement={discourseStateFilter} />
 
@@ -306,7 +307,7 @@ export class Dashboard extends Component {
                 <Column field="payment.paidAt" body={this.dateTemplate} />
 
                 <Column field="discourse.username" className="ellipsis" />
-                <Column field="discourse.active" body={this.discourseStatusTemplate.bind(this)} />
+                <Column field="discourseStatus" body={this.discourseStatusTemplate.bind(this)} />
 
                 <Column field="actionsMollie" body={this.actionsMollieTemplate.bind(this)} />
                 <Column field="actionsMailchimp" body={this.actionsMailchimpTemplate.bind(this)} />
