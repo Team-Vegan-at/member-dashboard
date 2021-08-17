@@ -1,6 +1,6 @@
 ### STAGE 1
 # Check out https://hub.docker.com/_/node to select a new base image
-FROM node:12-slim as build-stage
+FROM node:14-slim as build-stage
 
 # Set to a non-root built-in user `node`
 USER node
@@ -15,16 +15,20 @@ WORKDIR /home/node/app
 # where available (npm@5+)
 COPY --chown=node package*.json ./
 
-RUN yarn
-
 # Bundle app source code
 COPY --chown=node . .
+
+RUN npm install yarn
+# RUN yarn policies set-version 2
+RUN yarn set version berry
 
 ARG REACT_APP_API_KEY
 ARG REACT_APP_API_URL
 
+RUN yarn install
+
 RUN yarn run build && \
-    yarn cache clean
+  yarn cache clean
 
 ### STAGE 2
 FROM nginx:alpine as run-stage
