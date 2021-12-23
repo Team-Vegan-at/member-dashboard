@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { CalcUtil } from '../utils/calc.util';
 
 export class MembersService {
 
@@ -15,7 +16,7 @@ export class MembersService {
             }).then(res => {
                 const otp = res.data;
 
-                return axios.get(`${this.API_HOST}/dashboard/members`,
+                return axios.get(`${this.API_HOST}/dashboard/members?year=${CalcUtil.getCurrentMembershipYear()}`,
                 { 
                     headers: {
                         Authorization: `Bearer ${otp}`
