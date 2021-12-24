@@ -19,7 +19,7 @@ COPY --chown=node package*.json ./
 COPY --chown=node . .
 
 RUN npm install yarn
-RUN yarn set version 3
+RUN yarn set version stable
 
 ARG REACT_APP_API_KEY
 ARG REACT_APP_API_URL
