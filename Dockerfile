@@ -1,6 +1,6 @@
 ### STAGE 1
 # Check out https://hub.docker.com/_/node to select a new base image
-FROM node:14-slim as build-stage
+FROM node:16-slim as build-stage
 
 # Set to a non-root built-in user `node`
 USER node
@@ -19,8 +19,7 @@ COPY --chown=node package*.json ./
 COPY --chown=node . .
 
 RUN npm install yarn
-# RUN yarn policies set-version 2
-RUN yarn set version berry
+RUN yarn set version stable
 
 ARG REACT_APP_API_KEY
 ARG REACT_APP_API_URL

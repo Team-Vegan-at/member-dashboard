@@ -10,6 +10,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Tooltip } from 'primereact/tooltip';
 
 import { MembersService } from '../services/MembersService';
+import { CalcUtil } from '../utils/calc.util';
 
 export class Dashboard extends Component {
 
@@ -232,7 +233,7 @@ export class Dashboard extends Component {
                 <Row>
                     <Column header="name" rowSpan={2} field="name" sortable />
                     <Column header="email" rowSpan={2} field="email" sortable />
-                    <Column header={ `membership 2021` } colSpan={3} />
+                    <Column header={ `membership ${CalcUtil.getCurrentMembershipYear()}` } colSpan={3} />
                     <Column header="forum" colSpan={2} />
                     <Column header="actions" rowSpan={2} colSpan={3} field="actions" />
                 </Row>
