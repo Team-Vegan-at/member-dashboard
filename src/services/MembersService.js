@@ -16,8 +16,6 @@ export class MembersService {
             }).then(res => {
                 const otp = res.data;
 
-                // return axios.get(`${this.API_HOST}/dashboard/members?year=${CalcUtil.getCurrentMembershipYear()}`,
-                // return axios.get(`${this.API_HOST}/dashboard/members?year=2021`,
                 return axios.get(`${this.API_HOST}/dashboard/members?year=${year}`,
                 { 
                     headers: {

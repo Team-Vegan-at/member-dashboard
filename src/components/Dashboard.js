@@ -228,9 +228,6 @@ export class Dashboard extends Component {
         const subscriptionStateFilter =
             <Dropdown style={{width: '100%'}} placeholder="filter" 
                 value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
-        // const discourseStateFilter =
-        //     <Dropdown style={{width: '100%'}} placeholder="filter" 
-        //         value={this.state.selectedDiscourseState} options={this.state.discourseState} onChange={this.onDiscourseStatusChange} showClear />;
 
         const header = (
             <div style={{textAlign:'left'}}>
@@ -245,9 +242,7 @@ export class Dashboard extends Component {
                 <Row>
                     <Column header="name" rowSpan={2} field="name" sortable />
                     <Column header="email" rowSpan={2} field="email" sortable />
-                    {/* <Column header={ `membership ${CalcUtil.getCurrentMembershipYear()}` } colSpan={3} /> */}
                     <Column header={ `membership ${this.state.selectedMembershipYearState}` } colSpan={3} />
-                    {/* <Column header="forum" colSpan={2} /> */}
                     <Column header="forum" />
                     <Column header="actions" rowSpan={2} colSpan={3} field="actions" />
                 </Row>
@@ -256,7 +251,6 @@ export class Dashboard extends Component {
                     <Column header="dd" field="activeSubscription" sortable />
                     <Column header="date" field="payment.paidAt" sortable />
                     <Column header="username" field="discourse.username" sortable />
-                    {/* <Column header="status" field="discourse.active" sortable /> */}
                 </Row>
                 <Row>
                     <Column field="name"
@@ -286,10 +280,6 @@ export class Dashboard extends Component {
                             filter
                             filterPlaceholder="filter"
                             filterMatchMode="contains" />
-
-                    {/* <Column field="discourse"
-                            filter
-                            filterElement={discourseStateFilter} /> */}
 
                     <Column field="actions" colSpan={3} />
                 </Row>
@@ -321,8 +311,7 @@ export class Dashboard extends Component {
                 <Column field="payment.paidAt" body={this.dateTemplate} />
 
                 <Column field="discourse.username" className="ellipsis" />
-                {/* <Column field="discourse.active" body={this.discourseStatusTemplate.bind(this)} /> */}
-
+                
                 <Column field="actionsMollie" body={this.actionsMollieTemplate.bind(this)} />
                 <Column field="actionsMailchimp" body={this.actionsMailchimpTemplate.bind(this)} />
                 <Column field="actionsDiscourse" body={this.actionsDiscourseTemplate.bind(this)} />
