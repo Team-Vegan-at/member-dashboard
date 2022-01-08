@@ -20,7 +20,7 @@ export class Dashboard extends Component {
             loading: true,
             selectedPaymentState: null,
             selectedSubscriptionState: null,
-            selectedDiscourseState: null,
+            selectedMembershipYearState: CalcUtil.getCurrentMembershipYear().toString(),
             paymentState: [
                 { label: 'Paid', value: 'true' },
                 { label: 'Not Paid', value: 'false' },
@@ -29,24 +29,23 @@ export class Dashboard extends Component {
                 { label: 'Yes', value: 'true' },
                 { label: 'No', value: 'false' },
             ],
-            discourseState: [
-                { label: 'Active', value: 'active' },
-                { label: 'Suspended', value: 'suspended' },
-                { label: 'Not signed up', value: 'na' },
+            membershipYearState: [
+                { label: 'Membership Year 2020', value: '2020' },
+                { label: 'Membership Year 2021', value: '2021' },
+                { label: 'Membership Year 2022', value: '2022' }
             ],
             selectedDiscourseId: null,
         };
         this.onPaymentStatusChange = this.onPaymentStatusChange.bind(this);
         this.onSubscriptionStatusChange = this.onSubscriptionStatusChange.bind(this);
-        this.onDiscourseStatusChange = this.onDiscourseStatusChange.bind(this);
-        
+        this.onMembershipYearChange = this.onMembershipYearChange.bind(this);
         this.service = new MembersService();
         this.export = this.export.bind(this);
-        // this.suspend = this.suspend.bind(this);
+        this.setState({ loading: true });
     }
 
+
     componentDidMount() {
-        this.setState({ loading: true });
         this.service.getMembers().then(data => this.setState(
             {
                 members: data,
@@ -92,6 +91,17 @@ export class Dashboard extends Component {
             this.dt.filter("*.", 'discourse.suspended_at', 'equals');
         }
         this.setState({selectedDiscourseState: event.value});
+    }
+
+    onMembershipYearChange(event) {
+        this.setState({ loading: true });
+        this.setState({selectedMembershipYearState: event.value});
+        this.service.getMembers(event.value).then(data => this.setState(
+            {
+                members: data,
+                loading: false
+            }
+        ));    
     }
 
     paymentStatusTemplate(rowData, column) {
@@ -218,13 +228,15 @@ export class Dashboard extends Component {
         const subscriptionStateFilter =
             <Dropdown style={{width: '100%'}} placeholder="filter" 
                 value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
-        const discourseStateFilter =
-            <Dropdown style={{width: '100%'}} placeholder="filter" 
-                value={this.state.selectedDiscourseState} options={this.state.discourseState} onChange={this.onDiscourseStatusChange} showClear />;
+        // const discourseStateFilter =
+        //     <Dropdown style={{width: '100%'}} placeholder="filter" 
+        //         value={this.state.selectedDiscourseState} options={this.state.discourseState} onChange={this.onDiscourseStatusChange} showClear />;
 
         const header = (
             <div style={{textAlign:'left'}}>
                 <Button type="button" icon="pi pi-external-link" iconPos="left" label="CSV" onClick={this.export}/>
+                <Dropdown 
+                    value={this.state.selectedMembershipYearState} options={this.state.membershipYearState} onChange={this.onMembershipYearChange} />
             </div>);
 
 
@@ -233,8 +245,10 @@ export class Dashboard extends Component {
                 <Row>
                     <Column header="name" rowSpan={2} field="name" sortable />
                     <Column header="email" rowSpan={2} field="email" sortable />
-                    <Column header={ `membership ${CalcUtil.getCurrentMembershipYear()}` } colSpan={3} />
-                    <Column header="forum" colSpan={2} />
+                    {/* <Column header={ `membership ${CalcUtil.getCurrentMembershipYear()}` } colSpan={3} /> */}
+                    <Column header={ `membership ${this.state.selectedMembershipYearState}` } colSpan={3} />
+                    {/* <Column header="forum" colSpan={2} /> */}
+                    <Column header="forum" />
                     <Column header="actions" rowSpan={2} colSpan={3} field="actions" />
                 </Row>
                 <Row>
@@ -242,7 +256,7 @@ export class Dashboard extends Component {
                     <Column header="dd" field="activeSubscription" sortable />
                     <Column header="date" field="payment.paidAt" sortable />
                     <Column header="username" field="discourse.username" sortable />
-                    <Column header="status" field="discourse.active" sortable />
+                    {/* <Column header="status" field="discourse.active" sortable /> */}
                 </Row>
                 <Row>
                     <Column field="name"
@@ -273,9 +287,9 @@ export class Dashboard extends Component {
                             filterPlaceholder="filter"
                             filterMatchMode="contains" />
 
-                    <Column field="discourse"
+                    {/* <Column field="discourse"
                             filter
-                            filterElement={discourseStateFilter} />
+                            filterElement={discourseStateFilter} /> */}
 
                     <Column field="actions" colSpan={3} />
                 </Row>
@@ -307,7 +321,7 @@ export class Dashboard extends Component {
                 <Column field="payment.paidAt" body={this.dateTemplate} />
 
                 <Column field="discourse.username" className="ellipsis" />
-                <Column field="discourse.active" body={this.discourseStatusTemplate.bind(this)} />
+                {/* <Column field="discourse.active" body={this.discourseStatusTemplate.bind(this)} /> */}
 
                 <Column field="actionsMollie" body={this.actionsMollieTemplate.bind(this)} />
                 <Column field="actionsMailchimp" body={this.actionsMailchimpTemplate.bind(this)} />
