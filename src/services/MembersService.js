@@ -6,7 +6,7 @@ export class MembersService {
     API_HOST = process.env.REACT_APP_API_URL;
     API_KEY = process.env.REACT_APP_API_KEY;
 
-    getMembers(){
+    getMembers(year = CalcUtil.getCurrentMembershipYear()){
 
         return axios.get(`${this.API_HOST}/auth/otp`,
             { 
@@ -16,7 +16,7 @@ export class MembersService {
             }).then(res => {
                 const otp = res.data;
 
-                return axios.get(`${this.API_HOST}/dashboard/members?year=${CalcUtil.getCurrentMembershipYear()}`,
+                return axios.get(`${this.API_HOST}/dashboard/members?year=${year}`,
                 { 
                     headers: {
                         Authorization: `Bearer ${otp}`
