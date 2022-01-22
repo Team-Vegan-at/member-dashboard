@@ -17,6 +17,8 @@ export class Dashboard extends Component {
     constructor() {
         super();
         this.state = {
+            members: null,
+            numberOfMembers: 0,
             loading: true,
             selectedPaymentState: null,
             selectedSubscriptionState: null,
@@ -50,6 +52,12 @@ export class Dashboard extends Component {
             {
                 members: data,
                 loading: false
+            }
+        ));
+
+        this.service.getNumberOfMembers().then(data => this.setState(
+            {
+                numberOfMembers: data
             }
         ));
     }
@@ -101,7 +109,12 @@ export class Dashboard extends Component {
                 members: data,
                 loading: false
             }
-        ));    
+        ));
+        this.service.getNumberOfMembers(event.value).then(data => this.setState(
+            {
+                numberOfMembers: data
+            }
+        ));  
     }
 
     paymentStatusTemplate(rowData, column) {
@@ -234,6 +247,7 @@ export class Dashboard extends Component {
                 <Button type="button" icon="pi pi-external-link" iconPos="left" label="CSV" onClick={this.export}/>
                 <Dropdown 
                     value={this.state.selectedMembershipYearState} options={this.state.membershipYearState} onChange={this.onMembershipYearChange} />
+                <div className="activemembers">Active members: {this.state.numberOfMembers}</div>
             </div>);
 
 
