@@ -26,6 +26,12 @@ export class MembersService {
             });
     }
 
+    getNumberOfMembers(year = CalcUtil.getCurrentMembershipYear()){
+
+        return axios.get(`${this.API_HOST}/dashboard/numberofmembers?year=${year}`,
+            { }).then(resList => resList.data);
+    }
+
     suspendMember(userId){
 
         return axios.get(`${this.API_HOST}/auth/otp`,
