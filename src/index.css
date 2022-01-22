@@ -17,3 +17,9 @@ code {
   white-space: nowrap;
   overflow: hidden;
 }
+
+.activemembers {
+  display: inline-flex;
+  margin: 0 1em;
+  font-weight: normal;
+}
