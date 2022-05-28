@@ -29,7 +29,7 @@ RUN yarn run build && \
   yarn cache clean
 
 ### STAGE 2
-FROM nginx:alpine as run-stage
+FROM nginx:1.22.0-alpine as run-stage
 
 WORKDIR /usr/share/nginx/html
 
