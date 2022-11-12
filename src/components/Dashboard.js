@@ -62,7 +62,8 @@ export class Dashboard extends Component {
             membershipYearState: [
                 { label: 'Membership Year 2020', value: '2020' },
                 { label: 'Membership Year 2021', value: '2021' },
-                { label: 'Membership Year 2022', value: '2022' }
+                { label: 'Membership Year 2022', value: '2022' },
+                { label: 'Membership Year 2023', value: '2023' }
             ],
             selectedDiscourseId: null,
         };
@@ -301,9 +302,9 @@ export class Dashboard extends Component {
         const paymentStateFilter =
             <Dropdown style={{width: '100%'}} placeholder="filter" 
                 value={this.state.selectedPaymentState} options={this.state.paymentState} onChange={this.onPaymentStatusChange} showClear />;
-        const subscriptionStateFilter =
-            <Dropdown style={{width: '100%'}} placeholder="filter" 
-                value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
+        // const subscriptionStateFilter =
+        //     <Dropdown style={{width: '100%'}} placeholder="filter" 
+        //         value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
 
         const header = (
             <div className="left-50">
