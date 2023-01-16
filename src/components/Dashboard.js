@@ -302,9 +302,9 @@ export class Dashboard extends Component {
         const paymentStateFilter =
             <Dropdown style={{width: '100%'}} placeholder="filter" 
                 value={this.state.selectedPaymentState} options={this.state.paymentState} onChange={this.onPaymentStatusChange} showClear />;
-        // const subscriptionStateFilter =
-        //     <Dropdown style={{width: '100%'}} placeholder="filter" 
-        //         value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
+        const subscriptionStateFilter =
+            <Dropdown style={{width: '100%'}} placeholder="filter" 
+                value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
 
         const header = (
             <div className="left-50">
@@ -335,13 +335,13 @@ export class Dashboard extends Component {
                     <Column header="name" rowSpan={2} field="name" sortable />
                     <Column header="email" rowSpan={2} field="email" sortable />
                     <Column header="dob" rowSpan={2} field="dob" sortable />
-                    <Column header={ `membership ${this.state.selectedMembershipYearState}` } colSpan={2} />
+                    <Column header={ `membership ${this.state.selectedMembershipYearState}` } colSpan={3} />
                     <Column header="forum" />
                     <Column header="actions" rowSpan={2} colSpan={3} field="actions" />
                 </Row>
                 <Row>
                     <Column header="paid" field="paid" sortable />
-                    {/*<Column header="dd" field="activeSubscription" sortable />*/}
+                    <Column header="dd" field="activeSubscription" sortable />
                     {/*<Column header="amount" field="payment.amount" sortable />*/}
                     <Column header="date" field="payment.paidAt" sortable />
                     <Column header="username" field="discourse.username" sortable />
@@ -367,9 +367,9 @@ export class Dashboard extends Component {
                             filter
                             filterElement={paymentStateFilter} />
 
-                    {/*<Column field="activeSubscription" */}
-                    {/*        filter*/}
-                    {/*        filterElement={subscriptionStateFilter}  />*/}
+                    <Column field="activeSubscription"
+                            filter
+                            filterElement={subscriptionStateFilter}  />
                     
                     {/*<Column field="payment.amount" */}
                     {/*        filter /> */}
@@ -414,7 +414,7 @@ export class Dashboard extends Component {
                 <Column field="dob" />
 
                 <Column field="paid" body={this.paymentStatusTemplate} />
-                {/*<Column field="activeSubscription" body={this.subscriptionStatusTemplate} />*/}
+                <Column field="activeSubscription" body={this.subscriptionStatusTemplate} />
                 {/*<Column field="payment.amount" />*/}
                 <Column field="payment.paidAt" body={this.dateTemplate} />
 
