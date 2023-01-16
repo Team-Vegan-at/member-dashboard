@@ -302,9 +302,9 @@ export class Dashboard extends Component {
         const paymentStateFilter =
             <Dropdown style={{width: '100%'}} placeholder="filter" 
                 value={this.state.selectedPaymentState} options={this.state.paymentState} onChange={this.onPaymentStatusChange} showClear />;
-        // const subscriptionStateFilter =
-        //     <Dropdown style={{width: '100%'}} placeholder="filter" 
-        //         value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
+        const subscriptionStateFilter =
+            <Dropdown style={{width: '100%'}} placeholder="filter" 
+                value={this.state.selectedSubscriptionState} options={this.state.subscriptionState} onChange={this.onSubscriptionStatusChange} showClear />;
 
         const header = (
             <div className="left-50">
