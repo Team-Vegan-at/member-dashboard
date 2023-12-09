@@ -63,7 +63,8 @@ export class Dashboard extends Component {
                 { label: 'Membership Year 2020', value: '2020' },
                 { label: 'Membership Year 2021', value: '2021' },
                 { label: 'Membership Year 2022', value: '2022' },
-                { label: 'Membership Year 2023', value: '2023' }
+                { label: 'Membership Year 2023', value: '2023' },
+                { label: 'Membership Year 2024', value: '2024' }
             ],
             selectedDiscourseId: null,
         };
