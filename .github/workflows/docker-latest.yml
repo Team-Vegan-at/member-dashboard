@@ -1,9 +1,13 @@
 name: Docker Build Latest
 
 on:
+  workflow_dispatch:
+  release:
+    types: [ released ]
   push:
     branches:
       - main
+
 
 jobs:
   vm-job:
